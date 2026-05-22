@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ALAF Teknoloji</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar">
+      <a class="brand" href="#home" aria-label="ALAF Teknoloji Ana Sayfa">
+        <img src="assets/alaf_logo.jpeg" alt="ALAF Teknoloji Logo" />
+      </a>
+
+      <input type="checkbox" id="menu-toggle" class="menu-toggle" />
+      <label for="menu-toggle" class="menu-button" aria-label="Menüyü aç/kapat">
+        <span></span><span></span><span></span>
+      </label>
+
+      <div class="nav-links">
+        <a href="#home">Ana Sayfa</a>
+        <a href="#solutions">Çözümler</a>
+        <a href="#tech">Teknolojiler</a>
+        <a href="#about">Hakkımızda</a>
+        <a href="#contact">İletişim</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="hero">
+      <div class="hero-overlay"></div>
+
+      <div class="hero-content">
+        <div class="eyebrow">ALAF TEKNOLOJİ</div>
+        <h1>Yapay Zekâ Destekli Savunma Teknolojileri</h1>
+        <p>
+          Yapay zekâ yazılımları, askeri drone sistemleri, yüz tanıma ve görüntü
+          işleme alanlarında güvenlik odaklı çözümler geliştiriyoruz.
+        </p>
+        <div class="hero-actions">
+          <a href="#solutions" class="btn primary">Çözümlerimizi İnceleyin</a>
+          <a href="#contact" class="btn secondary">İletişime Geçin</a>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-label="Askeri drone konsept görseli">
+        <div class="drone-card">
+          <div class="drone-image">
+            <svg viewBox="0 0 900 520" role="img" aria-label="Askeri drone illüstrasyonu">
+              <defs>
+                <linearGradient id="metal" x1="0" x2="1">
+                  <stop offset="0%" stop-color="#2b2f34"/>
+                  <stop offset="50%" stop-color="#737b83"/>
+                  <stop offset="100%" stop-color="#171a1e"/>
+                </linearGradient>
+                <linearGradient id="accent" x1="0" x2="1">
+                  <stop offset="0%" stop-color="#ff3b1f"/>
+                  <stop offset="100%" stop-color="#ff8a1c"/>
+                </linearGradient>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+                  <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+
+              <rect x="0" y="0" width="900" height="520" fill="#0c0f12"/>
+              <g opacity=".22" stroke="#ff6a1f" stroke-width="1">
+                <path d="M40 80 H860 M40 160 H860 M40 240 H860 M40 320 H860 M40 400 H860"/>
+                <path d="M120 30 V490 M260 30 V490 M400 30 V490 M540 30 V490 M680 30 V490 M820 30 V490"/>
+              </g>
+              <circle cx="450" cy="260" r="205" fill="none" stroke="#ff6a1f" stroke-width="2" opacity=".35"/>
+              <circle cx="450" cy="260" r="120" fill="none" stroke="#ff6a1f" stroke-width="2" opacity=".22"/>
+
+              <g transform="translate(450 265)">
+                <path d="M-92 -12 C-50 -50, 50 -50, 92 -12 L72 24 C34 42, -34 42, -72 24 Z" fill="url(#metal)" stroke="#aeb6bd" stroke-width="2"/>
+                <path d="M-255 -8 L-86 -26 L-64 4 L-255 42 Z" fill="#2a2f35" stroke="#7f8790" stroke-width="2"/>
+                <path d="M255 -8 L86 -26 L64 4 L255 42 Z" fill="#2a2f35" stroke="#7f8790" stroke-width="2"/>
+                <path d="M-32 26 L-86 132 L-46 137 L0 54 L46 137 L86 132 L32 26 Z" fill="#242a30" stroke="#747d86" stroke-width="2"/>
+                <path d="M-7 -44 L0 -112 L7 -44 Z" fill="#555d66"/>
+                <path d="M0 -106 L-42 -152 L0 -132 L42 -152 Z" fill="#343a41" stroke="#868e96" stroke-width="2"/>
+                <ellipse cx="0" cy="-6" rx="30" ry="15" fill="#111418" stroke="url(#accent)" stroke-width="3" filter="url(#glow)"/>
+                <path d="M-38 4 H38" stroke="url(#accent)" stroke-width="4" filter="url(#glow)"/>
+              </g>
+
+              <g fill="#ff6a1f" opacity=".9">
+                <rect x="72" y="64" width="110" height="3"/>
+                <rect x="72" y="64" width="3" height="54"/>
+                <rect x="718" y="402" width="110" height="3"/>
+                <rect x="825" y="350" width="3" height="55"/>
+              </g>
+              <text x="74" y="142" fill="#ff8a1c" font-size="18" font-family="Arial">AUTONOMOUS SYSTEM</text>
+              <text x="650" y="334" fill="#ff8a1c" font-size="18" font-family="Arial">SECURE VISION</text>
+            </svg>
+          </div>
+          <div class="drone-caption">
+            <span>Otonom Sistemler</span>
+            <strong>Drone · AI · Vision</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="solutions" class="section">
+      <div class="section-head">
+        <span>Faaliyet Alanları</span>
+        <h2>Savunma sanayi için uçtan uca teknoloji çözümleri</h2>
+      </div>
+
+      <div class="cards">
+        <article class="card">
+          <h3>Yapay Zekâ Yazılımları</h3>
+          <p>Veri analizi, karar destek, otomasyon ve güvenlik odaklı yapay zekâ çözümleri.</p>
+        </article>
+        <article class="card">
+          <h3>Askeri Drone Sistemleri</h3>
+          <p>Otonom görev yönetimi, görüntü aktarımı ve sahaya uygun kontrol altyapıları.</p>
+        </article>
+        <article class="card">
+          <h3>Yüz Tanıma Sistemleri</h3>
+          <p>Gerçek zamanlı görüntü işleme, kimlik doğrulama ve güvenlik analiz sistemleri.</p>
+        </article>
+        <article class="card">
+          <h3>Görüntü İşleme</h3>
+          <p>Hedef tespiti, hareket analizi ve sahadan gelen görüntülerin anlamlandırılması.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="tech" class="tech-band">
+      <div class="section tech-inner">
+        <div>
+          <span class="label">Teknoloji Odağı</span>
+          <h2>Güvenlik, hız ve saha uyumluluğu</h2>
+          <p>
+            ALAF Teknoloji; kapalı ağlarda çalışabilecek, kurumsal entegrasyona uygun,
+            güvenlik öncelikli yazılım ve donanım çözümleri geliştirir.
+          </p>
+        </div>
+        <div class="tech-list">
+          <span>Artificial Intelligence</span>
+          <span>Computer Vision</span>
+          <span>Autonomous Systems</span>
+          <span>Secure Infrastructure</span>
+          <span>Real-Time Analytics</span>
+          <span>Drone Control</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section about">
+      <div class="about-card">
+        <span>Kurumsal Yaklaşım</span>
+        <h2>Yerli teknoloji, güvenli mimari, sahaya uygun çözümler</h2>
+        <p>
+          Savunma sanayinin ihtiyaç duyduğu dayanıklı, güvenli ve ölçeklenebilir
+          sistemleri; yapay zekâ, otonom sistemler ve görüntü işleme kabiliyetleriyle
+          birleştiriyoruz.
+        </p>
+      </div>
+    </section>
+
+    <section id="contact" class="section contact">
+      <h2>Projeleriniz için bizimle iletişime geçin</h2>
+      <p>ALAF Teknoloji çözümleri hakkında detaylı bilgi almak için kurumsal iletişim kanallarımızdan bize ulaşabilirsiniz.</p>
+      <a href="mailto:info@alafteknoloji.com" class="btn primary">info@alafteknoloji.com</a>
+    </section>
+  </main>
+
+  <footer>
+    <div>ALAF Teknoloji © 2019 Tüm Hakları Saklıdır.</div>
+  </footer>
+</body>
+</html>
