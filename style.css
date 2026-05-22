@@ -71,3 +71,40 @@ footer{text-align:center;color:#9298a2;background:#050505;border-top:1px solid r
   h1{font-size:36px}
   .tag{font-size:11px}
 }
+
+
+.contact-box{
+  margin-top:32px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+  text-align:left;
+}
+
+.contact-item{
+  background:linear-gradient(180deg,#151619,#0d0d0e);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:18px;
+  padding:22px;
+}
+
+.contact-item strong{
+  display:block;
+  margin-bottom:10px;
+  color:#ff641f;
+  font-size:14px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.contact-item span{
+  color:#d0d4db;
+  line-height:1.7;
+}
+
+@media(max-width:780px){
+  .contact-box{
+    grid-template-columns:1fr;
+    text-align:left;
+  }
+}
