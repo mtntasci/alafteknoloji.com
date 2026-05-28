@@ -1,153 +1,393 @@
 <!DOCTYPE html>
+<!-- SOM BTA v8 fixed: sidebar text removed, improved Turkey map -->
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ALAF Teknoloji</title>
-  <link rel="stylesheet" href="style.css" />
+  <!-- Face assets are stored under assets/faces/. You may replace SVG files with JPG/PNG photos using the same names. -->
+  <title>SOM Savunma | Biyometrik Tanıma Demo</title>
+  <style>
+    :root{
+      --bg:#030303;--panel:#0b0b0b;--panel2:#111111;--line:#2a2a2a;--text:#f4f4f4;--muted:#a7a7a7;
+      --accent:#f07a18;--accent2:#18c787;--danger:#ff4d5a;--warn:#ffc857;--soft:#171717;
+      --shadow:0 18px 45px rgba(0,0,0,.55);--radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:
+      radial-gradient(circle at 20% 5%,rgba(215,168,63,.16),transparent 30%),
+      linear-gradient(135deg,#000,#050505 45%,#0a0a0a);color:var(--text);min-height:100vh}
+    body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:34px 34px;pointer-events:none}
+    .login{min-height:100vh;display:grid;place-items:center;padding:22px}
+    .login-card{width:min(1040px,100%);display:grid;grid-template-columns:1.1fr .9fr;background:rgba(8,8,8,.88);border:1px solid rgba(240,122,24,.26);border-radius:28px;box-shadow:var(--shadow);overflow:hidden;backdrop-filter:blur(14px)}
+    .brand-side{padding:42px;background:linear-gradient(160deg,rgba(215,168,63,.14),rgba(7,16,25,.4));border-right:1px solid var(--line)}
+    .logo-wrap{display:flex;align-items:center;gap:14px}.logo-mark{width:72px;height:72px}.brand-title{font-size:25px;font-weight:800;letter-spacing:.4px}.brand-sub{color:var(--muted);margin-top:5px}
+    .hero-title{font-size:42px;line-height:1.08;margin:52px 0 14px;font-weight:850}.hero-text{color:#b9c8d8;font-size:16px;line-height:1.7;max-width:560px}
+    .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}.chip{padding:10px 13px;border:1px solid rgba(215,168,63,.3);border-radius:999px;background:rgba(215,168,63,.08);color:#ffd2a6;font-size:13px}
+    .form-side{padding:42px}.form-side h2{margin:0 0 8px;font-size:28px}.hint{color:var(--muted);margin-bottom:26px}
+    label{font-size:13px;color:#b8c7d8;display:block;margin:14px 0 8px}input,select,textarea{width:100%;border:1px solid var(--line);background:#070707;color:var(--text);border-radius:14px;padding:14px 15px;outline:none;font-size:15px}
+    input:focus,select:focus,textarea:focus{border-color:rgba(215,168,63,.8);box-shadow:0 0 0 4px rgba(215,168,63,.08)}
+    button{border:0;border-radius:14px;padding:13px 16px;background:linear-gradient(135deg,#f07a18,#b24f08);color:#0b121a;font-weight:800;cursor:pointer}
+    button.secondary{background:#151515;color:#efefef;border:1px solid var(--line)}button.danger{background:linear-gradient(135deg,#ff5a66,#a72735);color:white}
+    .err{display:none;margin-top:15px;color:#ffd3d7;background:rgba(255,77,90,.12);border:1px solid rgba(255,77,90,.3);padding:12px;border-radius:14px}
+    .app{display:none;min-height:100vh}.layout{display:grid;grid-template-columns:285px 1fr;min-height:100vh}
+    .sidebar{background:rgba(4,4,4,.94);border-right:1px solid var(--line);padding:18px;position:sticky;top:0;height:100vh;overflow:auto}
+    .side-logo{display:flex;gap:12px;align-items:center;justify-content:center;padding:8px 6px 20px;border-bottom:1px solid var(--line);margin-bottom:14px}.side-logo svg{width:52px}.side-logo b{display:block}.side-logo span{font-size:12px;color:var(--muted)}
+    .menu button{width:100%;display:flex;align-items:center;gap:10px;justify-content:flex-start;margin:6px 0;background:transparent;color:#d8d8d8;border:1px solid transparent;font-weight:650}
+    .menu button:hover,.menu button.active{background:rgba(215,168,63,.1);border-color:rgba(215,168,63,.24);color:#ffd7b4}
+    .main{min-width:0}.topbar{height:74px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--line);background:rgba(5,5,5,.76);backdrop-filter:blur(12px);position:sticky;top:0;z-index:3}
+    .status{display:flex;gap:10px;align-items:center;color:#d0d0d0;font-size:13px}.dot{width:9px;height:9px;border-radius:50%;background:var(--accent2);box-shadow:0 0 13px var(--accent2)}
+    .userbox{position:relative;display:flex;align-items:center;gap:12px;cursor:pointer}.avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#24384d,#f07a18);display:grid;place-items:center;font-weight:900}
+    .dropdown{display:none;position:absolute;right:0;top:54px;background:#0b0b0b;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);min-width:230px;padding:8px}.dropdown div{padding:12px;border-radius:12px;color:#dbe8f6}.dropdown div:hover{background:#181818}.userbox.open .dropdown{display:block}
+    .content{padding:24px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.card{background:rgba(14,27,40,.84);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:0 12px 35px rgba(0,0,0,.18)}
+    .card h3{margin:0 0 12px}.metric{font-size:31px;font-weight:850}.muted{color:var(--muted)}.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}.three{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+    table{width:100%;border-collapse:collapse}td,th{padding:12px;border-bottom:1px solid var(--line);text-align:left;color:#d8e5f4}th{color:#91a9c2;font-size:12px;text-transform:uppercase}
+    .badge{padding:6px 10px;border-radius:999px;font-size:12px;background:#1b3148;color:#cde3fb;display:inline-block}.badge.red{background:rgba(255,77,90,.14);color:#ffb8bf}.badge.green{background:rgba(22,199,132,.12);color:#93f0c8}.badge.gold{background:rgba(215,168,63,.13);color:#ffd978}
+    .search-panel{display:grid;grid-template-columns:.95fr 1.05fr;gap:16px}.preview{height:300px;border:1px dashed #37516d;border-radius:18px;display:grid;place-items:center;background:#070707;overflow:hidden}.preview img{max-width:100%;max-height:100%;object-fit:cover}
+    .scanner{height:300px;overflow:hidden;border-radius:18px;border:1px solid var(--line);background:#070707;position:relative}.faces{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:12px}.face{aspect-ratio:1;border-radius:14px;background:#111111;border:1px solid #303030;display:grid;place-items:center;font-size:11px;color:#8fa8c1;transition:.15s}.face.hit{outline:3px solid var(--danger);background:rgba(255,77,90,.18);transform:scale(1.06)}
+    .result{display:none;border:1px solid rgba(255,77,90,.35);background:rgba(255,77,90,.08);border-radius:18px;padding:16px;margin-top:16px}
+    .form-row{display:grid;grid-template-columns:1fr auto;gap:10px}.checks{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.check{border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:#070707}.check input{width:auto}
+    .placeholder{min-height:300px;display:grid;gap:15px}.fakebar{height:12px;border-radius:999px;background:linear-gradient(90deg,#151515,#f07a18,#151515);background-size:200% 100%;animation:flow 2.8s infinite}.fakebox{height:110px;border-radius:16px;border:1px solid var(--line);background:linear-gradient(135deg,#0a1724,#14283d)}
+
+    .person-cell{display:flex;gap:10px;align-items:center}
+    .mini-face{width:46px;height:46px;border-radius:13px;overflow:hidden;border:1px solid #303030;background:#111;flex:0 0 auto}
+    .mini-face svg,.face svg{width:100%;height:100%;display:block}
+    .face{position:relative;overflow:hidden}
+    .face span{position:absolute;bottom:4px;left:4px;right:4px;background:rgba(0,0,0,.62);border-radius:8px;padding:2px 4px;text-align:center}
+
+    @keyframes flow{to{background-position:200% 0}}
+    @media(max-width:900px){.login-card{grid-template-columns:1fr}.brand-side{border-right:0;border-bottom:1px solid var(--line)}.hero-title{font-size:32px;margin-top:32px}.layout{grid-template-columns:1fr}.sidebar{position:fixed;z-index:10;transform:translateX(-105%);transition:.25s;width:285px}.sidebar.open{transform:none}.grid{grid-template-columns:1fr 1fr}.two,.three,.search-panel{grid-template-columns:1fr}.content{padding:16px}.mobile-menu{display:block!important}}
+    @media(max-width:560px){.grid{grid-template-columns:1fr}.form-side,.brand-side{padding:26px}.topbar{padding:0 14px}.status span:nth-child(n+2){display:none}}
+    .mobile-menu{display:none}
+  
+    /* v8 overrides */
+    .side-logo.only-logo{justify-content:center!important;gap:0!important;padding:14px 6px 22px!important}
+    .side-logo.only-logo #sideLogo{width:190px!important;height:92px!important;display:flex!important;align-items:center!important;justify-content:center!important}
+    .side-logo.only-logo #sideLogo img{width:190px!important;height:92px!important;object-fit:contain!important}
+    .side-logo.only-logo img{width:190px!important;height:92px!important;object-fit:contain!important}
+    .side-logo.only-logo div:not(#sideLogo){display:none!important}
+    .real-tr-map{position:relative;min-height:315px;border:1px solid var(--line);border-radius:18px;background:radial-gradient(circle at 52% 50%,rgba(240,122,24,.13),transparent 42%),#070707;overflow:hidden;padding:14px}
+    .real-tr-map svg{width:100%;height:285px;display:block}
+    @media(max-width:560px){.side-logo.only-logo #sideLogo,.side-logo.only-logo #sideLogo img,.side-logo.only-logo img{width:160px!important;height:78px!important}}
+
+  
+    /* v9 single scan effect */
+    .scanner.single-scan{
+      height:380px!important;
+      display:grid;
+      place-items:center;
+      overflow:hidden!important;
+      background:radial-gradient(circle at 50% 45%,rgba(240,122,24,.10),transparent 45%),#070707!important;
+      position:relative;
+    }
+    .scanner.single-scan:before{
+      content:"";
+      position:absolute;
+      left:0;right:0;
+      top:45%;
+      height:2px;
+      background:linear-gradient(90deg,transparent,#f07a18,transparent);
+      opacity:.85;
+      box-shadow:0 0 18px rgba(240,122,24,.9);
+      animation:scanline 1.15s linear infinite;
+      z-index:3;
+    }
+    @keyframes scanline{0%{top:8%;opacity:.2}50%{opacity:1}100%{top:92%;opacity:.2}}
+    .scan-single-card{
+      width:min(290px,88%);
+      border:1px solid rgba(240,122,24,.45);
+      border-radius:24px;
+      overflow:hidden;
+      background:#111;
+      box-shadow:0 22px 55px rgba(0,0,0,.55),0 0 36px rgba(240,122,24,.10);
+      transform:scale(.98);
+      animation:facePulse .22s ease;
+      position:relative;
+    }
+    @keyframes facePulse{from{transform:scale(.92);filter:blur(2px);opacity:.45}to{transform:scale(.98);filter:blur(0);opacity:1}}
+    .scan-single-card img{width:100%;height:290px;object-fit:cover;display:block}
+    .scan-single-meta{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:12px 14px;
+      background:rgba(0,0,0,.72);
+      border-top:1px solid rgba(255,255,255,.08);
+      font-size:13px;
+      color:#ddd;
+    }
+    .scan-single-meta b{color:#ffd0a8}
+    .match-layout{display:grid;grid-template-columns:210px 1fr;gap:16px;align-items:start;margin-top:14px}
+    .match-photo{border:1px solid rgba(255,77,90,.45);border-radius:18px;overflow:hidden;background:#111;box-shadow:0 0 30px rgba(255,77,90,.12)}
+    .match-photo img{width:100%;height:230px;object-fit:cover;display:block}
+    @media(max-width:700px){
+      .scanner.single-scan{height:330px!important}
+      .scan-single-card img{height:235px}
+      .match-layout{grid-template-columns:1fr}
+      .match-photo img{height:260px}
+    }
+
+  </style>
 </head>
 <body>
-
-<header class="topbar">
-  <div class="nav">
-    <a href="#home" class="logo">
-      <img src="assets/alaf_logo.jpeg" alt="ALAF Teknoloji">
-    </a>
-
-    <input type="checkbox" id="menu" class="menu-check">
-    <label for="menu" class="hamburger"><span></span><span></span><span></span></label>
-
-    <div class="links">
-      <a href="#home">Ana Sayfa</a>
-      <a href="#solutions">Çözümler</a>
-      <a href="#tech">Teknolojiler</a>
-      <a href="#about">Hakkımızda</a>
-      <a href="#contact">İletişim</a>
-    </div>
-  </div>
-</header>
-
-<main>
-  <section id="home" class="hero">
-    <div class="hero-text">
-      <div class="tag">ALAF TEKNOLOJİ</div>
-      <h1>Yapay Zekâ Destekli Savunma Teknolojileri</h1>
-      <p>
-        Yapay zekâ yazılımları, askeri drone sistemleri, yüz tanıma ve görüntü
-        işleme alanlarında güvenlik odaklı çözümler geliştiriyoruz.
-      </p>
-      <div class="buttons">
-        <a href="#solutions" class="btn primary">Çözümlerimizi İnceleyin</a>
-        <a href="#contact" class="btn ghost">İletişime Geçin</a>
+  <section class="login" id="loginView">
+    <div class="login-card">
+      <div class="brand-side">
+        <div class="logo-wrap"><div id="loginLogo" class="logo-mark"></div><div><div class="brand-title">SOM SAVUNMA</div><div class="brand-sub">Sanayi ve Havacılık A.Ş.</div></div></div>
+        <div class="hero-title">Biyometrik Tanıma ve Analiz Sistemi</div>
+        <div class="hero-text">Kapalı ağlarda görevli personel yetkilendirmesi, kategori bazlı sorgulama ve yüz eşleşme simülasyonu.</div>
+        <div class="chips"><span class="chip">Güvenli Oturum</span><span class="chip">Kategori Bazlı Yetki</span><span class="chip">Statik Demo Veri</span></div>
       </div>
-    </div>
-
-    <div class="hero-image">
-      <div class="drone-panel">
-        <svg viewBox="0 0 900 520" preserveAspectRatio="xMidYMid meet" aria-label="Askeri drone konsepti">
-          <defs>
-            <linearGradient id="body" x1="0" x2="1">
-              <stop offset="0" stop-color="#1f2429"/>
-              <stop offset=".5" stop-color="#737b84"/>
-              <stop offset="1" stop-color="#171a1f"/>
-            </linearGradient>
-            <linearGradient id="orange" x1="0" x2="1">
-              <stop offset="0" stop-color="#e9341d"/>
-              <stop offset="1" stop-color="#ff8a1c"/>
-            </linearGradient>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="5" result="blur"/>
-              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-          </defs>
-
-          <rect width="900" height="520" fill="#080b0e"/>
-          <g opacity=".23" stroke="#ff641f" stroke-width="1">
-            <path d="M60 90H840M60 170H840M60 250H840M60 330H840M60 410H840"/>
-            <path d="M140 50V470M280 50V470M420 50V470M560 50V470M700 50V470"/>
-          </g>
-          <circle cx="450" cy="260" r="205" fill="none" stroke="#ff641f" opacity=".35" stroke-width="2"/>
-          <circle cx="450" cy="260" r="118" fill="none" stroke="#ff641f" opacity=".22" stroke-width="2"/>
-
-          <g transform="translate(450 270)">
-            <path d="M-96 -15C-48 -54 48 -54 96 -15L73 25C35 45-35 45-73 25Z" fill="url(#body)" stroke="#aeb6bd" stroke-width="2"/>
-            <path d="M-270 -8L-85 -30L-62 2L-270 42Z" fill="#252b31" stroke="#7f8790" stroke-width="2"/>
-            <path d="M270 -8L85 -30L62 2L270 42Z" fill="#252b31" stroke="#7f8790" stroke-width="2"/>
-            <path d="M-34 25L-88 135L-48 140L0 55L48 140L88 135L34 25Z" fill="#22282e" stroke="#747d86" stroke-width="2"/>
-            <path d="M-7 -45L0 -112L7 -45Z" fill="#555d66"/>
-            <path d="M0 -106L-42 -152L0 -132L42 -152Z" fill="#343a41" stroke="#868e96" stroke-width="2"/>
-            <ellipse cx="0" cy="-5" rx="30" ry="15" fill="#111418" stroke="url(#orange)" stroke-width="4" filter="url(#glow)"/>
-            <path d="M-42 5H42" stroke="url(#orange)" stroke-width="4" filter="url(#glow)"/>
-          </g>
-
-          <g fill="#ff641f">
-            <rect x="70" y="65" width="110" height="3"/>
-            <rect x="70" y="65" width="3" height="54"/>
-            <rect x="720" y="402" width="110" height="3"/>
-            <rect x="827" y="350" width="3" height="55"/>
-          </g>
-          <text x="72" y="140" fill="#ff8a1c" font-size="18" font-family="Arial">AUTONOMOUS SYSTEM</text>
-          <text x="645" y="334" fill="#ff8a1c" font-size="18" font-family="Arial">SECURE VISION</text>
-        </svg>
+      <div class="form-side">
+        <h2>Yetkili Giriş</h2><div class="hint">Root kullanıcı adı veya tanımlı personel T.C. kimlik numarası ile giriş yapın.</div>
+        <label>Kullanıcı / T.C. Kimlik No</label><input id="loginUser" placeholder="root veya 11 haneli TCKN" autocomplete="off" />
+        <label>Şifre</label><input id="loginPass" type="password" placeholder="••••••" />
+        <button style="width:100%;margin-top:18px" onclick="login()">Sisteme Giriş Yap</button>
+        <div class="err" id="loginErr">Giriş bilgileri hatalı veya kullanıcı tanımlı değil.</div>
       </div>
     </div>
   </section>
 
-  <section id="solutions" class="section">
-    <span class="tag">FAALİYET ALANLARI</span>
-    <h2>Savunma sanayi için uçtan uca teknoloji çözümleri</h2>
-    <div class="cards">
-      <div class="card"><h3>Yapay Zekâ Yazılımları</h3><p>Veri analizi, karar destek, otomasyon ve güvenlik odaklı yapay zekâ çözümleri.</p></div>
-      <div class="card"><h3>Askeri Drone Sistemleri</h3><p>Otonom görev yönetimi, görüntü aktarımı ve sahaya uygun kontrol altyapıları.</p></div>
-      <div class="card"><h3>Yüz Tanıma Sistemleri</h3><p>Gerçek zamanlı görüntü işleme, kimlik doğrulama ve güvenlik analiz sistemleri.</p></div>
-      <div class="card"><h3>Görüntü İşleme</h3><p>Hedef tespiti, hareket analizi ve sahadan gelen görüntülerin anlamlandırılması.</p></div>
+  <section class="app" id="appView">
+    <div class="layout">
+      <aside class="sidebar" id="sidebar"><div class="side-logo only-logo"><div id="sideLogo"></div></div><div class="menu" id="menu"></div></aside>
+      <main class="main">
+        <div class="topbar">
+          <button class="secondary mobile-menu" onclick="toggleMenu()">☰</button>
+          <div class="status"><i class="dot"></i><span>Güvenli Ağ</span><span>•</span><span id="clock"></span><span>• Sistem Aktif</span></div>
+          <div class="userbox" onclick="this.classList.toggle('open')"><div><b id="topName"></b><div class="muted" id="topRole" style="font-size:12px"></div></div><div class="avatar" id="topAvatar">S</div><div class="dropdown"><div onclick="renderProfile()">Profilim</div><div>Profil Bilgileri</div><div onclick="logout()">Güvenli Çıkış</div></div></div>
+        </div>
+        <div class="content" id="content"></div>
+      </main>
     </div>
   </section>
 
-  <section id="tech" class="section tech">
-    <div>
-      <span class="tag">TEKNOLOJİ ODAĞI</span>
-      <h2>Güvenlik, hız ve saha uyumluluğu</h2>
-      <p>Kapalı ağlarda çalışabilecek, kurumsal entegrasyona uygun, güvenlik öncelikli yazılım ve donanım çözümleri geliştiriyoruz.</p>
+<script>
+const SOM_LOGO = `<img src="assets/som-logo.png" alt="SOM Logo" style="width:100%;height:100%;object-fit:contain">`;
+document.getElementById('loginLogo').innerHTML=SOM_LOGO;document.getElementById('sideLogo').innerHTML=SOM_LOGO;
+
+const AUTH_SECRET_B64 = "MTU1MTU1"; // demo şifresi tek yerde ve düz yazı değildir
+const pass = () => atob(AUTH_SECRET_B64);
+
+const PEOPLE = {
+  root:{id:"root",name:"SOM Sistem Yöneticisi",rank:"Root Yetkili Kullanıcı",role:"root",avatar:"R"},
+  "78093713244":{id:"78093713244",name:"Mete Yarar",rank:"Piyade Yüzbaşı",role:"captain",avatar:"Y"},
+  "47870081128":{id:"47870081128",name:"Ali Doğan Bilir",rank:"Uzman Çavuş",role:"specialist",avatar:"U"}
+};
+const DEFAULT_PERMS = { root:[1,2,3], captain:[], specialist:[3] };
+let current = null, scanTimer=null;
+
+
+
+function faceImg(n){
+  const file=String(n).padStart(2,"0")+".png";
+  return `<img src="assets/faces/${file}" alt="${file}" style="width:100%;height:100%;object-fit:cover;display:block">`;
+}
+function miniFace(n){return `<div class="mini-face">${faceImg(n)}</div>`}
+
+
+function getPerms(id){
+  const raw = localStorage.getItem("som_perm_"+id);
+  if(raw) return JSON.parse(raw);
+  const u=PEOPLE[id]; return DEFAULT_PERMS[u.role]||[];
+}
+function setPerms(id, arr){localStorage.setItem("som_perm_"+id, JSON.stringify(arr.map(Number).sort()))}
+function login(){
+  const u=document.getElementById("loginUser").value.trim();
+  const p=document.getElementById("loginPass").value.trim();
+  const ok = PEOPLE[u] && p===pass();
+  document.getElementById("loginErr").style.display=ok?"none":"block";
+  if(!ok) return;
+  current=PEOPLE[u]; sessionStorage.setItem("som_current",u); boot();
+}
+function boot(){
+  document.getElementById("loginView").style.display="none";document.getElementById("appView").style.display="block";
+  document.getElementById("topName").textContent=current.rank+" "+current.name;
+  document.getElementById("topRole").textContent=current.role==="root"?"Sistem Yönetimi":"JGK Personel Paneli";
+  document.getElementById("topAvatar").textContent=current.avatar;
+  buildMenu(); renderDashboard(); tick();
+}
+function logout(){sessionStorage.removeItem("som_current"); location.reload()}
+function toggleMenu(){document.getElementById("sidebar").classList.toggle("open")}
+function tick(){document.getElementById("clock").textContent=new Date().toLocaleString("tr-TR"); setTimeout(tick,1000)}
+function menuItem(key,label,icon){return `<button onclick="nav('${key}', this)">${icon} ${label}</button>`}
+function buildMenu(){
+  let html="";
+  if(current.role==="root"){
+    html += menuItem("dash","Genel Bakış","▣")+menuItem("sync","Kullanıcıları Eşleştir","⇄")+menuItem("rootauth","Kurum Yetkilisi Yetkilendir","⚿")+menuItem("groups","Yetki Grupları","▤")+menuItem("pool","Aranan Kişi Havuzu","◎")+menuItem("new","Yeni Kişi Ekle","＋")+menuItem("logs","Sistem Logları","≡")+menuItem("health","Sistem Sağlığı","◉")+menuItem("settings","Entegrasyon Ayarları","⚙");
+  } else {
+    html += menuItem("dash","Operasyon Özeti","▣")+menuItem("search","Detaylı Yüz Arama","⌕")+menuItem("pool","Aranan Kişiler","◎");
+    if(current.role!=="specialist") html += menuItem("logs","İşlem Geçmişi","≡");
+    html += menuItem("profile","Profilim","◍");
+    if(current.role==="captain") html += menuItem("personauth","Personele Yetki Ver","⚿")+menuItem("reports","Bölgesel Raporlar","▥");
+  }
+  document.getElementById("menu").innerHTML=html;
+}
+function nav(key,btn){document.querySelectorAll(".menu button").forEach(b=>b.classList.remove("active")); if(btn)btn.classList.add("active"); toggleMenu(); ({dash:renderDashboard,search:renderSearch,rootauth:renderRootAuth,personauth:renderPersonAuth,pool:renderPool,logs:renderLogs,health:renderHealth,profile:renderProfile,new:renderNewPerson,sync:()=>placeholder("Kullanıcıları Eşleştir","Jandarma personel servisinden kurum kullanıcıları çekiliyor gibi gösterilen entegrasyon ekranı."),groups:()=>placeholder("Yetki Grupları","Kategori ve rütbe bazlı erişim matrisi demo görünümü."),settings:()=>placeholder("Entegrasyon Ayarları","Kapalı ağ, terminal doğrulama ve kurum entegrasyon parametreleri."),reports:()=>placeholder("Bölgesel Raporlar","Bölgelere göre arama yoğunluğu ve eşleşme istatistikleri.")}[key]||renderDashboard)();}
+
+function turkeyMap(){
+  return `
+  <div style="position:relative;min-height:270px;border:1px solid var(--line);border-radius:18px;background:radial-gradient(circle at 55% 45%,rgba(240,122,24,.12),transparent 42%),#070707;overflow:hidden;padding:18px">
+    <svg viewBox="0 0 800 360" style="width:100%;height:260px;display:block">
+      <path d="M74 182 L107 152 L161 146 L212 121 L286 126 L337 111 L407 122 L463 109 L542 130 L615 124 L693 150 L741 190 L718 226 L649 234 L585 257 L514 246 L453 265 L389 243 L322 251 L255 232 L190 239 L135 215 Z"
+        fill="rgba(240,122,24,.18)" stroke="rgba(240,122,24,.85)" stroke-width="4" />
+      <path d="M74 182 L107 152 L161 146 L212 121 L286 126 L337 111 L407 122 L463 109 L542 130 L615 124 L693 150 L741 190" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="2"/>
+      <g font-family="Arial" font-size="13" fill="#f4f4f4">
+        <g class="map-point"><circle cx="205" cy="182" r="7" fill="#18c787"/><circle cx="205" cy="182" r="16" fill="none" stroke="#18c787" opacity=".55"><animate attributeName="r" values="9;24;9" dur="2s" repeatCount="indefinite"/></circle><text x="220" y="187">İstanbul</text></g>
+        <g class="map-point"><circle cx="366" cy="190" r="7" fill="#f07a18"/><circle cx="366" cy="190" r="16" fill="none" stroke="#f07a18" opacity=".55"><animate attributeName="r" values="9;24;9" dur="2.3s" repeatCount="indefinite"/></circle><text x="382" y="195">Ankara</text></g>
+        <g class="map-point"><circle cx="600" cy="202" r="7" fill="#ff4d5a"/><circle cx="600" cy="202" r="16" fill="none" stroke="#ff4d5a" opacity=".55"><animate attributeName="r" values="9;24;9" dur="1.8s" repeatCount="indefinite"/></circle><text x="616" y="207">Diyarbakır</text></g>
+        <g class="map-point"><circle cx="690" cy="185" r="7" fill="#f0b84f"/><circle cx="690" cy="185" r="16" fill="none" stroke="#f0b84f" opacity=".55"><animate attributeName="r" values="9;24;9" dur="2.6s" repeatCount="indefinite"/></circle><text x="646" y="170">Van</text></g>
+        <g class="map-point"><circle cx="298" cy="230" r="6" fill="#18c787"/><text x="313" y="235">İzmir</text></g>
+        <g class="map-point"><circle cx="456" cy="238" r="6" fill="#18c787"/><text x="471" y="243">Adana</text></g>
+      </g>
+    </svg>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px">
+      <div class="badge green">24 Aktif Terminal</div>
+      <div class="badge gold">6 Bölgesel İzleme</div>
+      <div class="badge red">1 Kritik Eşleşme</div>
     </div>
-    <div class="chips">
-      <span>Artificial Intelligence</span><span>Computer Vision</span><span>Autonomous Systems</span>
-      <span>Secure Infrastructure</span><span>Real-Time Analytics</span><span>Drone Control</span>
-    </div>
-  </section>
+  </div>`;
+}
 
-  <section id="about" class="section about">
-    <span class="tag">KURUMSAL YAKLAŞIM</span>
-    <h2>Yerli teknoloji, güvenli mimari, sahaya uygun çözümler</h2>
-    <p>Savunma sanayinin ihtiyaç duyduğu dayanıklı, güvenli ve ölçeklenebilir sistemleri; yapay zekâ, otonom sistemler ve görüntü işleme kabiliyetleriyle birleştiriyoruz.</p>
-  </section>
+function renderDashboard(){
+  const c=document.getElementById("content"); const perms=getPerms(current.id);
+  c.innerHTML=`<h2>Genel Bakış</h2><p class="muted">Demo ortamında tüm veriler statik olarak üretilmiştir.</p>
+  <div class="grid"><div class="card"><div class="muted">Bugünkü Arama</div><div class="metric">128</div></div><div class="card"><div class="muted">Aktif Terminal</div><div class="metric">24</div></div><div class="card"><div class="muted">Yetki Kategorileri</div><div class="metric">${perms.length||0}</div></div><div class="card"><div class="muted">Son Eşleşme</div><div class="metric">%98.7</div></div></div>
+  <div class="two" style="margin-top:16px"><div class="card"><h3>Türkiye Operasyon Haritası</h3>${turkeyMap()}</div><div class="card"><h3>Son Bildirimler</h3><p>18:42 — Terminal doğrulandı</p><p>18:44 — Yetki matrisi güncellendi</p><p>18:47 — Kategori 3 sorgusu tamamlandı</p></div></div>`;
+}
+function renderSearch(){
+  document.getElementById("content").innerHTML=`<h2>Detaylı Yüz Arama</h2><p class="muted">Kategori seçimi yetki matrisine göre kontrol edilir. Arama simülasyonu demo verilerle yapılır.</p>
+  <div class="search-panel"><div class="card"><h3>Sorgu Fotoğrafı</h3><label>Arama Kategorisi</label><select id="cat"><option value="1">Kategori 1 — Üst Seviye Arananlar</option><option value="2">Kategori 2 — Orta Seviye Arananlar</option><option value="3">Kategori 3 — Genel Arama</option></select><label>Fotoğraf Yükle</label><input type="file" id="photo" accept="image/*" onchange="previewPhoto(event)"><div class="preview" id="preview">Fotoğraf önizlemesi</div><button style="width:100%;margin-top:14px" onclick="startScan()">Detaylı Arama Başlat</button><div id="authMsg"></div></div>
+  <div class="card"><h3>Tekil Biyometrik Tarama Paneli</h3><div class="scanner single-scan" id="scanner"><div id="singleScanFace" class="muted">Arama bekleniyor</div></div><div id="scanStatus" class="muted" style="margin-top:12px">Arama bekleniyor.</div><div class="result" id="result"><h3>⚠ Eşleşme Bulundu</h3><div class="person-cell" style="margin:10px 0 14px">${miniFace(50)}<div><b>Murat Demir</b><br><span class="muted">Referans Görsel: 50.jpg</span></div></div><p><b>Benzerlik:</b> %98.7</p><p><b>T.C. Kimlik No:</b> 10000000050</p><p><b>Kategori:</b> Kategori 1 — Üst Seviye</p><p><b>Aranma Nedeni:</b> Hakkında yakalama kararı bulunan şüpheli kişi kaydı</p><p><b>Referans Görsel:</b> 50.jpg</p></div></div></div>`;
+}
+function previewPhoto(e){const f=e.target.files[0]; if(!f)return; const img=document.createElement("img"); img.src=URL.createObjectURL(f); const p=document.getElementById("preview"); p.innerHTML=""; p.appendChild(img);}
+function faces(){let s=""; for(let i=1;i<=50;i++){s+=`<div class="face" id="f${i}">${faceImg(i)}<span>${String(i).padStart(2,"0")}.jpg</span></div>`} return s}
 
-  <section id="contact" class="section contact">
-    <h2>Projeleriniz için bizimle iletişime geçin</h2>
-    <p>ALAF Teknoloji çözümleri hakkında detaylı bilgi almak için bize ulaşabilirsiniz.</p>
 
-    <div class="contact-box">
-      <div class="contact-item">
-        <strong>Adres</strong>
-        <span>Yakacık Çarşı Mah. Panorama Sok. No: 26 Kartal<br>İstanbul, 34876, Türkiye</span>
+function startScan(){
+  const cat=Number(document.getElementById("cat").value), perms=getPerms(current.id);
+  const msg=document.getElementById("authMsg");
+  msg.innerHTML="";
+
+  if(!perms.includes(cat)){
+    msg.innerHTML=`<div class="err" style="display:block">Bu kategori için arama yetkiniz bulunmamaktadır. Mevcut yetkiler: ${perms.map(x=>"Kategori "+x).join(", ")||"Yok"}</div>`;
+    return;
+  }
+
+  const fileInput = document.getElementById("photo");
+  let target = 50;
+
+  if(fileInput.files && fileInput.files[0]){
+    const original = fileInput.files[0].name;
+    const match = original.match(/([0-9]+)/);
+    if(match){
+      const parsed = parseInt(match[1]);
+      if(parsed >= 1 && parsed <= 50) target = parsed;
+    }
+  }
+
+  const scanBox = document.getElementById("singleScanFace");
+  const result = document.getElementById("result");
+
+  result.style.display="none";
+  clearInterval(scanTimer);
+
+  let i=1;
+  document.getElementById("scanStatus").innerHTML =
+    `<span class="badge gold">TARAMA BAŞLADI</span> Biyometrik vektör çıkarılıyor...`;
+
+  scanTimer=setInterval(()=>{
+    const fileNo = String(i).padStart(2,"0");
+    scanBox.innerHTML = `
+      <div class="scan-single-card">
+        <img src="assets/faces/${fileNo}.png" alt="${fileNo}.png">
+        <div class="scan-single-meta">
+          <span>Taranan Kayıt</span>
+          <b>${fileNo}.png</b>
+        </div>
       </div>
+    `;
 
-      <div class="contact-item">
-        <strong>Telefon</strong>
-        <span>+90 216 377 00 11</span>
-      </div>
+    document.getElementById("scanStatus").innerHTML =
+      `<span class="badge gold">TARANIYOR</span> ${fileNo}.png kaydı karşılaştırılıyor...`;
 
-      <div class="contact-item">
-        <strong>E-Posta</strong>
-        <span>info@alafteknoloji.com</span>
-      </div>
-    </div>
+    if(i === target){
+      clearInterval(scanTimer);
 
-    <a href="mailto:info@alafteknoloji.com" class="btn primary">İletişime Geçin</a>
-  </section>
-</main>
+      const personNames = {
+        7:"Yusuf Arslan",
+        13:"Hakan Kılıç",
+        21:"Serkan Akın",
+        34:"Emre Kaya",
+        50:"Murat Demir"
+      };
 
-<footer>ALAF Teknoloji © 2019 Tüm Hakları Saklıdır.</footer>
+      const personReasons = {
+        7:"Kritik takip kaydı",
+        13:"Genel arama kaydı",
+        21:"İfade ve kontrol amaçlı aranan şahıs",
+        34:"Bölgesel sorgu kaydı",
+        50:"Hakkında yakalama kararı bulunan şüpheli kişi kaydı"
+      };
 
+      const personCats = {
+        7:"Kategori 1 — Üst Seviye",
+        13:"Kategori 3 — Genel Arama",
+        21:"Kategori 2 — Orta Seviye",
+        34:"Kategori 2 — Orta Seviye",
+        50:"Kategori 1 — Üst Seviye"
+      };
+
+      const name = personNames[target] || "Bilinmeyen Kayıt";
+      const reason = personReasons[target] || "Demo kayıt";
+      const category = personCats[target] || "Kategori 3 — Genel Arama";
+      const targetNo = String(target).padStart(2,"0");
+
+      document.getElementById("scanStatus").innerHTML =
+        `<span class="badge red">EŞLEŞME BULUNDU</span> Referans kayıt: ${targetNo}.png`;
+
+      result.style.display="block";
+      result.innerHTML = `
+        <h3>⚠ Eşleşme Bulundu</h3>
+        <div class="match-layout">
+          <div class="match-photo">
+            <img src="assets/faces/${targetNo}.png" alt="${targetNo}.png">
+          </div>
+          <div>
+            <p><b>Ad Soyad:</b> ${name}</p>
+            <p><b>Benzerlik:</b> %98.${target}</p>
+            <p><b>T.C. Kimlik No:</b> 100000000${targetNo}</p>
+            <p><b>Kategori:</b> ${category}</p>
+            <p><b>Referans Görsel:</b> ${targetNo}.png</p>
+            <p><b>Aranma Nedeni:</b> ${reason}</p>
+            <p><b>Durum:</b> <span class="badge red">Aktif Kayıt</span></p>
+          </div>
+        </div>
+      `;
+    }
+
+    i++;
+  },170);
+}
+
+
+function renderRootAuth(){authPanel("78093713244","Yüzbaşı Yetkilendirme","Root kullanıcısı kurum yetkilisinin kategori erişimini belirler.");}
+function renderPersonAuth(){authPanel("47870081128","Personele Yetki Ver","Yüzbaşı, alt personele kategori bazlı arama yetkisi verir veya kaldırır.");}
+function authPanel(targetId,title,desc){
+  const target=PEOPLE[targetId], perms=getPerms(targetId);
+  document.getElementById("content").innerHTML=`<h2>${title}</h2><p class="muted">${desc}</p><div class="card"><div class="form-row"><input id="tcFind" placeholder="Personel T.C. Kimlik No" value="${targetId}"><button onclick="findPerson('${targetId}')">Personeli Bul</button></div><div id="found" style="margin-top:16px">${personCard(target,perms)}</div></div>`;
+}
+function findPerson(targetId){const val=document.getElementById("tcFind").value.trim(); document.getElementById("found").innerHTML = val===targetId ? personCard(PEOPLE[targetId],getPerms(targetId)) : `<div class="err" style="display:block">Bu demo ortamında personel bulunamadı.</div>`}
+function personCard(p,perms){return `<div class="card" style="background:#070707"><h3>${p.rank} ${p.name}</h3><p class="muted">TCKN: ${p.id}</p><div class="checks">${[1,2,3].map(n=>`<label class="check"><input type="checkbox" id="perm${n}" ${perms.includes(n)?"checked":""}> Kategori ${n}</label>`).join("")}</div><button onclick="saveAuth('${p.id}')">Yetkileri Kaydet</button></div>`}
+function saveAuth(id){let arr=[1,2,3].filter(n=>document.getElementById("perm"+n).checked); setPerms(id,arr); alert("Yetkiler güncellendi. Yeni yetki seti aynı tarayıcıda saklandı.");}
+function renderPool(){document.getElementById("content").innerHTML=`<h2>Aranan Kişi Havuzu</h2><div class="card"><table><tr><th>Kişi</th><th>Kategori</th><th>Risk</th><th>Durum</th></tr><tr><td><div class="person-cell">${miniFace(50)}<div><b>Murat Demir</b><br><span class="muted">50.jpg</span></div></div></td><td>K1</td><td><span class="badge red">Yüksek</span></td><td>Aktif</td></tr><tr><td><div class="person-cell">${miniFace(21)}<div><b>Serkan Akın</b><br><span class="muted">21.jpg</span></div></div></td><td>K2</td><td><span class="badge gold">Orta</span></td><td>İzlemede</td></tr><tr><td><div class="person-cell">${miniFace(13)}<div><b>Hakan Kılıç</b><br><span class="muted">13.jpg</span></div></div></td><td>K3</td><td><span class="badge green">Genel</span></td><td>Aktif</td></tr><tr><td><div class="person-cell">${miniFace(34)}<div><b>Emre Kaya</b><br><span class="muted">34.jpg</span></div></div></td><td>K2</td><td><span class="badge gold">Orta</span></td><td>Pasif İzleme</td></tr><tr><td><div class="person-cell">${miniFace(7)}<div><b>Yusuf Arslan</b><br><span class="muted">07.jpg</span></div></div></td><td>K1</td><td><span class="badge red">Yüksek</span></td><td>Aktif</td></tr></table></div>`}
+function renderLogs(){document.getElementById("content").innerHTML=`<h2>İşlem Geçmişi</h2><div class="card"><table><tr><th>Saat</th><th>Kullanıcı</th><th>İşlem</th><th>Terminal</th></tr><tr><td>18:40</td><td>Root</td><td>Yetki matrisi güncellendi</td><td>SOM-ADM-01</td></tr><tr><td>18:44</td><td>Yüzbaşı</td><td>Personel yetkisi düzenlendi</td><td>JGK-KRK-12</td></tr><tr><td>18:47</td><td>Uzman Çavuş</td><td>Kategori araması başlattı</td><td>JGK-MBL-03</td></tr></table></div>`}
+function renderHealth(){document.getElementById("content").innerHTML=`<h2>Sistem Sağlığı</h2><div class="grid"><div class="card"><div class="muted">Sunucu</div><div class="metric">%99</div></div><div class="card"><div class="muted">Senkronizasyon</div><div class="metric">%94</div></div><div class="card"><div class="muted">Güvenlik</div><div class="metric">Aktif</div></div><div class="card"><div class="muted">Ağ</div><div class="metric">%97</div></div></div><div class="card" style="margin-top:16px">${fakeBars()}</div>`}
+function renderNewPerson(){placeholder("Yeni Kişi Ekle","Bu ekran sadece sunum amaçlıdır. Form görünür; veri kaydı yapılmaz.");}
+function renderProfile(){document.getElementById("content").innerHTML=`<h2>Profilim</h2><div class="card"><h3>${current.rank} ${current.name}</h3><p><b>Kullanıcı:</b> ${current.id}</p><p><b>Rol:</b> ${current.role}</p><p><b>Yetkiler:</b> ${getPerms(current.id).map(x=>"Kategori "+x).join(", ")||"Tanımlı değil"}</p><p><b>Son Giriş:</b> ${new Date().toLocaleString("tr-TR")}</p></div>`}
+function placeholder(title,desc){document.getElementById("content").innerHTML=`<h2>${title}</h2><p class="muted">${desc}</p><div class="placeholder"><div class="card"><h3>Demo Modül</h3><p>Bu bölüm sunum ekranı olarak hazırlanmıştır; işlem fonksiyonu aktif değildir.</p>${fakeBars()}</div><div class="two"><div class="fakebox"></div><div class="fakebox"></div></div></div>`}
+function fakeBars(){return `<div class="fakebar"></div><br><div class="fakebar" style="width:83%"></div><br><div class="fakebar" style="width:62%"></div>`}
+
+const cached=sessionStorage.getItem("som_current"); if(cached&&PEOPLE[cached]){current=PEOPLE[cached]; boot();}
+</script>
 </body>
 </html>
